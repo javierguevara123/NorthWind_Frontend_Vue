@@ -12,6 +12,8 @@ import ReporteErrores from "../components/ReporteErrores.vue";
 import PerfilUsuario from "../components/PerfilUsuario.vue";
 import ListadoFacturas from "../components/ListadoFacturas.vue";
 import SelectProductos from "@/components/SelectProductos.vue";
+import SelectClientes from "@/components/SelectClientes.vue";
+import PrintInvoice from "@/components/PrintInvoice.vue";
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -28,6 +30,13 @@ const routes = [
   { path: "/perfil", component: PerfilUsuario },
   { path: "/facturas", component: ListadoFacturas },
   { path: "/selectProductos", component: SelectProductos },
+  { path: "/selectClientes", component: SelectClientes },
+  { 
+    path: "/print-invoice/:id", // El :id es vital para recibir el número de orden
+    name: "PrintInvoice",       // El nombre debe coincidir con el push del router
+    component: PrintInvoice,
+    props: true                 // Permite pasar el ID como prop si se necesita
+  },
 ];
 
 const router = createRouter({

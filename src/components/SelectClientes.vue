@@ -13,7 +13,7 @@
             </div>
 
             <h2 class="text-center fw-bold mb-5 gradient-title">
-              <i class="fas fa-boxes me-3"></i>Consulta de Productos
+              <i class="fas fa-address-book me-3"></i>Consulta de Clientes
             </h2>
 
             <div class="card modern-card mb-4">
@@ -29,7 +29,8 @@
                         id="buscador"
                         placeholder="Buscar..."
                       />
-                      <label for="buscador" class="ps-5">Buscar por nombre...</label>
+                      <label for="buscador" class="ps-5">Buscar por nombre o ID...</label>
+                      
                       <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
                         <i v-if="buscando" class="fas fa-spinner fa-spin text-primary"></i>
                         <i v-else class="fas fa-search"></i>
@@ -43,8 +44,8 @@
             <div class="card modern-card">
               <div class="card-header bg-gradient-info d-flex justify-content-between align-items-center">
                 <h5 class="card-title text-white mb-0">
-                  <i class="fas fa-list-alt me-2"></i>Inventario
-                  <span class="badge bg-light text-dark ms-2">{{ paginacion.totalCount }}</span>
+                  <i class="fas fa-users me-2"></i>Cartera de Clientes
+                  <span class="badge bg-light text-dark ms-2">{{ paginacion.totalRecords }}</span>
                 </h5>
                 <div class="d-flex align-items-center">
                   <span class="text-white me-2 small">Mostrar:</span>
@@ -67,45 +68,46 @@
                     <thead class="table-dark">
                       <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Valor Total</th>
+                        <th>Nombre / Compañía</th>
+                        <th>Saldo Actual</th>
                         <th class="text-center">Estado</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-if="loading">
-                        <td colspan="6" class="text-center py-5">
+                        <td colspan="4" class="text-center py-5">
                            <div class="spinner-border text-primary" role="status"></div>
-                           <p class="mt-2 text-muted">Buscando productos...</p>
+                           <p class="mt-2 text-muted">Buscando clientes...</p>
                         </td>
                       </tr>
                       
-                      <tr v-else-if="productos.length === 0">
-                        <td colspan="6" class="text-center py-4 text-muted">
-                          No se encontraron productos.
+                      <tr v-else-if="clientes.length === 0">
+                        <td colspan="4" class="text-center py-4 text-muted">
+                          No se encontraron clientes con ese criterio.
                         </td>
                       </tr>
 
                       <tr v-else 
-                          v-for="producto in productos" 
-                          :key="producto.id" 
+                          v-for="cliente in clientes" 
+                          :key="cliente.id" 
                           class="table-row"
-                          :class="{
-                             'row-out-of-stock': producto.unitsInStock === 0,
-                             'row-low-stock': producto.unitsInStock > 0 && producto.isLowStock
-                          }">
+                      >
+                        <td class="fw-bold text-secondary">{{ cliente.id }}</td>
+                        
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="user-info">{{ cliente.name }}</span>
+                                </div>
+                        </td>
 
-                        <td class="fw-bold">{{ producto.id }}</td>
-                        <td><span class="user-info">{{ producto.name }}</span></td>
-                        <td class="fw-bold text-primary">${{ producto.unitPrice ? producto.unitPrice.toFixed(2) : '0.00' }}</td>
-                        <td class="fw-bold">{{ producto.unitsInStock }}</td>
-                        <td class="text-muted">${{ producto.totalValue ? producto.totalValue.toFixed(2) : '0.00' }}</td>
+                        <td class="fw-bold text-dark">
+                            ${{ cliente.currentBalance ? cliente.currentBalance.toFixed(2) : '0.00' }}
+                        </td>
+                        
                         <td class="text-center">
                           <span class="badge" 
-                                :class="producto.unitsInStock === 0 ? 'bg-danger' : (producto.isLowStock ? 'bg-warning text-dark' : 'bg-success')">
-                            {{ producto.unitsInStock === 0 ? 'Agotado' : (producto.isLowStock ? 'Bajo Stock' : 'Disponible') }}
+                                :class="cliente.currentBalance > 0 ? 'bg-success' : 'bg-secondary'">
+                            {{ cliente.currentBalance > 0 ? 'Con Saldo' : 'Sin Deuda' }}
                           </span>
                         </td>
                       </tr>
@@ -114,7 +116,6 @@
                 </div>
 
                 <div class="pagination-container" v-if="!loading && totalPaginas > 0">
-                  
                   <button 
                     class="btn-nav" 
                     :disabled="paginacion.pageNumber === 1" 
@@ -135,7 +136,6 @@
                   >
                     Siguiente <i class="fas fa-chevron-right ms-2"></i>
                   </button>
-
                 </div>
 
               </div>
@@ -171,18 +171,15 @@
 import { Modal } from 'bootstrap';
 
 export default {
-  name: "SelectProductos",
+  name: "SelectClientes",
   data() {
     return {
-      productos: [],
+      clientes: [],
       filtroBusqueda: "",
       paginacion: {
         pageNumber: 1,
         pageSize: 10,
-        totalCount: 0,
-        totalPages: 0,
-        hasPreviousPage: false,
-        hasNextPage: false
+        totalRecords: 0
       },
       loading: false,
       buscando: false,
@@ -196,11 +193,11 @@ export default {
   },
   computed: {
     totalPaginas() {
-      return this.paginacion.totalPages || Math.ceil(this.paginacion.totalCount / this.paginacion.pageSize) || 1;
+      return Math.ceil(this.paginacion.totalRecords / this.paginacion.pageSize) || 1;
     }
   },
   mounted() {
-    this.cargarProductos();
+    this.cargarClientes();
     this.inicializarModales();
   },
   methods: {
@@ -222,41 +219,46 @@ export default {
       if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
       this.debounceTimeout = setTimeout(() => {
         this.paginacion.pageNumber = 1;
-        this.cargarProductos();
+        this.cargarClientes();
       }, 500);
     },
 
-    // --- LISTAR ---
-    async cargarProductos() {
+    // --- API: LISTAR CLIENTES ---
+    async cargarClientes() {
       this.loading = true;
       try {
         const token = localStorage.getItem("token");
+        
         const params = new URLSearchParams({
             PageNumber: this.paginacion.pageNumber,
             PageSize: this.paginacion.pageSize,
             OrderDescending: false
         });
 
-        if (this.filtroBusqueda) params.append("SearchTerm", this.filtroBusqueda);
+        if (this.filtroBusqueda) {
+            params.append("SearchTerm", this.filtroBusqueda);
+        }
 
-        const url = `https://localhost:7176/api/products?${params.toString()}`;
+        const url = `https://localhost:7176/api/customers?${params.toString()}`;
+        
         const res = await fetch(url, {
-          headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
+          headers: { 
+            'accept': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
         });
 
         if (!res.ok) throw new Error("Error al obtener datos");
 
         const data = await res.json();
         
-        this.productos = data.items; 
-        this.paginacion.totalCount = data.totalCount;
-        this.paginacion.totalPages = data.totalPages;
-        this.paginacion.hasPreviousPage = data.hasPreviousPage;
-        this.paginacion.hasNextPage = data.hasNextPage;
+        // Mapeo según JSON de customers
+        this.clientes = data.customers;
+        this.paginacion.totalRecords = data.totalRecords;
 
       } catch (error) {
         console.error(error);
-        this.mostrarError("No se pudo cargar el inventario de productos.");
+        this.mostrarError("No se pudo cargar la lista de clientes.");
       } finally {
         this.loading = false;
         this.buscando = false;
@@ -267,13 +269,13 @@ export default {
         const nuevaPagina = this.paginacion.pageNumber + delta;
         if (nuevaPagina > 0 && nuevaPagina <= this.totalPaginas) {
             this.paginacion.pageNumber = nuevaPagina;
-            this.cargarProductos();
+            this.cargarClientes();
         }
     },
 
     cambiarTamanoPagina() {
         this.paginacion.pageNumber = 1;
-        this.cargarProductos();
+        this.cargarClientes();
     },
   }
 };
@@ -281,7 +283,7 @@ export default {
 
 <style scoped>
 /* =========================================
-   ESTILOS GENERALES
+   ESTILOS MODERNOS (Consistentes)
 ========================================= */
 .full-screen-page {
   position: fixed;
@@ -304,6 +306,7 @@ export default {
 }
 .container-fluid { background: transparent; min-height: auto; }
 
+/* Títulos y Cards */
 .gradient-title {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -321,34 +324,21 @@ export default {
 .modern-card .card-header { border: none; padding: 1.5rem; }
 .modern-card .card-body { padding: 2rem; }
 
+/* Inputs */
 .modern-input {
   border-radius: 15px; border: 2px solid #e9ecef; transition: all 0.3s ease;
   padding: 0.75rem 1rem; background-color: #fff;
 }
 .modern-input:focus { border-color: #667eea; box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25); transform: translateY(-2px); }
 
-/* =========================================
-   ESTILOS DE TABLA
-========================================= */
+/* Tabla */
 .modern-table { border-radius: 15px; overflow: hidden; border: none; background-color: white; }
 .modern-table .table-dark { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
-.user-info { font-weight: 600; color: #2c3e50; }
-
 .table-row { transition: all 0.2s ease; }
 .table-row:hover { background-color: rgba(102, 126, 234, 0.1); }
+.user-info { font-weight: 600; color: #2c3e50; }
 
-.row-out-of-stock {
-    background-color: rgba(220, 53, 69, 0.15) !important;
-    box-shadow: inset 0 0 0 1px rgba(220, 53, 69, 0.3);
-}
-.row-out-of-stock:hover { background-color: rgba(220, 53, 69, 0.25) !important; }
-
-.row-low-stock { background-color: rgba(255, 193, 7, 0.15) !important; }
-.row-low-stock:hover { background-color: rgba(255, 193, 7, 0.25) !important; }
-
-/* =========================================
-   NUEVA PAGINACIÓN (BOTONES GRANDES)
-========================================= */
+/* Paginación (Botones Grandes) */
 .pagination-container {
   display: flex;
   justify-content: space-between;
@@ -399,6 +389,8 @@ export default {
 .modern-modal .modal-header { border: none; padding: 1.5rem 2rem; }
 .modern-modal .modal-body { padding: 2rem; }
 .modern-modal .modal-footer { border: none; padding: 1.5rem 2rem; background-color: #f8f9fa; }
+.modern-btn { border-radius: 50px; padding: 0.5rem 1.5rem; }
+
 .badge { font-size: 0.75rem; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; }
 .overlay::-webkit-scrollbar { width: 8px; }
 .overlay::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
