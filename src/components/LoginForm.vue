@@ -140,7 +140,7 @@ export default {
 
       // 3. Petición al Backend
       try {
-        const response = await fetch("http://northwindweb.somee.com/user/Login", {
+        const response = await fetch("/api/user/Login", {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
