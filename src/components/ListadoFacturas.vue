@@ -300,7 +300,7 @@ export default {
         if (this.filtros.fromDate) params.append("FromDate", this.filtros.fromDate);
         if (this.filtros.toDate) params.append("ToDate", this.filtros.toDate);
 
-        const url = `https://localhost:7176/api/orders?${params.toString()}`;
+        const url = `http://northwindweb.somee.com/api/orders?${params.toString()}`;
         const res = await fetch(url, { headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` } });
 
         if (!res.ok) throw new Error("Error al obtener facturas");
@@ -339,7 +339,7 @@ export default {
         this.detalleModalInstance?.show();
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`https://localhost:7176/GetOrderById/${id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/GetOrderById/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!res.ok) throw new Error("Error detalle");

@@ -264,7 +264,7 @@
 
 <script>
 import { Modal } from 'bootstrap';
-const ApiBaseUrl = 'https://localhost:7176';
+const ApiBaseUrl = 'http://northwindweb.somee.com';
 
 export default {
   name: 'OrderFormComponent',

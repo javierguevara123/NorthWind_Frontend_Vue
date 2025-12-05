@@ -63,7 +63,7 @@ export default {
       console.log("➡ Ejecutando cargarErrores...");
 
       try {
-        const response = await fetch("http://localhost:5265/api/errorlogs", {
+        const response = await fetch("http://northwindweb.somee.com/api/errorlogs", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }

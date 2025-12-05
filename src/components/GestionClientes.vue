@@ -338,7 +338,7 @@ export default {
 
         if (this.filtroBusqueda) params.append("SearchTerm", this.filtroBusqueda);
 
-        const url = `https://localhost:7176/api/customers?${params.toString()}`;
+        const url = `http://northwindweb.somee.com/api/customers?${params.toString()}`;
         const res = await fetch(url, {
           headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
         });
@@ -394,7 +394,7 @@ export default {
               phone: this.nuevoCliente.phone
           };
 
-          const res = await fetch(`https://localhost:7176/CreateCustomer`, {
+          const res = await fetch(`http://northwindweb.somee.com/CreateCustomer`, {
               method: 'POST',
               headers: { 
                   'Content-Type': 'application/json', 
@@ -425,7 +425,7 @@ export default {
       
       try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`https://localhost:7176/GetCustomerById/${cliente.id}`, {
+          const res = await fetch(`http://northwindweb.somee.com/GetCustomerById/${cliente.id}`, {
               headers: { 'Authorization': `Bearer ${token}` }
           });
 
@@ -461,7 +461,7 @@ export default {
                 currentBalance: this.clienteEditando.currentBalance
             };
 
-            const res = await fetch(`https://localhost:7176/UpdateCustomer/${this.clienteEditando.id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/UpdateCustomer/${this.clienteEditando.id}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -497,7 +497,7 @@ export default {
         
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`https://localhost:7176/DeleteCustomer/${id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/DeleteCustomer/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

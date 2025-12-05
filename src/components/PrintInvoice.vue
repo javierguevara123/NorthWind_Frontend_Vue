@@ -135,7 +135,7 @@
 <script>
 import html2pdf from 'html2pdf.js';
 
-const ApiBaseUrl = 'https://localhost:7176';
+const ApiBaseUrl = 'http://northwindweb.somee.com';
 
 export default {
   name: 'PrintInvoice',

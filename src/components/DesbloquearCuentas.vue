@@ -200,7 +200,7 @@ export default {
             pageSize: this.paginacion.pageSize
         });
 
-        const url = `https://localhost:7176/user/GetLockedOutUsers?${params.toString()}`;
+        const url = `http://northwindweb.somee.com/user/GetLockedOutUsers?${params.toString()}`;
 
         const res = await fetch(url, {
           headers: { 
@@ -258,7 +258,7 @@ export default {
             
             // Endpoint POST /user/UnlockUser
             // Body: { "email": "..." }
-            const res = await fetch("https://localhost:7176/user/UnlockUser", {
+            const res = await fetch("http://northwindweb.somee.com/user/UnlockUser", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

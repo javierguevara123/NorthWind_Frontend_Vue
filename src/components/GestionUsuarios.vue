@@ -345,7 +345,7 @@ export default {
             pageSize: this.paginacion.pageSize
         }).toString();
         
-        const url = `https://localhost:7176/user/GetAllUsers?${queryParams}`;
+        const url = `http://northwindweb.somee.com/user/GetAllUsers?${queryParams}`;
 
         const res = await fetch(url, {
           headers: { 'accept': '*/*', 'Authorization': `Bearer ${token}` },
@@ -383,7 +383,7 @@ export default {
             const token = localStorage.getItem("token");
             
             // A) Registrar
-            const resRegister = await fetch("https://localhost:7176/user/Register", {
+            const resRegister = await fetch("http://northwindweb.somee.com/user/Register", {
                 method: "POST", 
                 headers: { "Content-Type": "application/json", "accept": "*/*", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({
@@ -404,7 +404,7 @@ export default {
             }
 
             // B) Asignar Rol
-            const resRole = await fetch("https://localhost:7176/user/ChangeUserRole", {
+            const resRole = await fetch("http://northwindweb.somee.com/user/ChangeUserRole", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "accept": "*/*", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({
@@ -450,7 +450,7 @@ export default {
         
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`https://localhost:7176/api/users/${user.id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/api/users/${user.id}`, {
                  headers: { Authorization: `Bearer ${token}` },
             });
             
@@ -503,7 +503,7 @@ export default {
 
             console.log("Enviando payload:", payloadUpdate); // Para debug
 
-            const resUpdate = await fetch(`https://localhost:7176/user/UpdateUser`, {
+            const resUpdate = await fetch(`http://northwindweb.somee.com/user/UpdateUser`, {
                 method: "PUT",
                 headers: { 
                     "Content-Type": "application/json", 
@@ -530,7 +530,7 @@ export default {
 
             // Validar cambio de rol (Usamos el email nuevo por si cambió)
             if (this.usuarioEdit.role !== this.usuarioEdit.originalRole) {
-                const resRole = await fetch("https://localhost:7176/user/ChangeUserRole", {
+                const resRole = await fetch("http://northwindweb.somee.com/user/ChangeUserRole", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                     body: JSON.stringify({
@@ -574,7 +574,7 @@ export default {
             this.loading = true;
             const token = localStorage.getItem("token");
             const emailParam = encodeURIComponent(this.usuarioAEliminar.email);
-            const url = `https://localhost:7176/user/DeleteUser?email=${emailParam}`;
+            const url = `http://northwindweb.somee.com/user/DeleteUser?email=${emailParam}`;
 
             const res = await fetch(url, {
                 method: "DELETE", 

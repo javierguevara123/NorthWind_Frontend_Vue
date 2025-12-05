@@ -343,7 +343,7 @@ export default {
 
         if (this.filtroBusqueda) params.append("SearchTerm", this.filtroBusqueda);
 
-        const url = `https://localhost:7176/api/products?${params.toString()}`;
+        const url = `http://northwindweb.somee.com/api/products?${params.toString()}`;
         const res = await fetch(url, {
           headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
         });
@@ -400,7 +400,7 @@ export default {
               unitPrice: this.nuevoProducto.unitPrice
           };
 
-          const res = await fetch(`https://localhost:7176/CreateProduct`, {
+          const res = await fetch(`http://northwindweb.somee.com/CreateProduct`, {
               method: 'POST',
               headers: { 
                   'Content-Type': 'application/json', 
@@ -436,7 +436,7 @@ export default {
       
       try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`https://localhost:7176/GetProductById/${producto.id}`, {
+          const res = await fetch(`http://northwindweb.somee.com/GetProductById/${producto.id}`, {
               headers: { 'Authorization': `Bearer ${token}` }
           });
 
@@ -472,7 +472,7 @@ export default {
                 unitPrice: this.productoEditado.unitPrice
             };
 
-            const res = await fetch(`https://localhost:7176/UpdateProduct/${this.productoEditado.id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/UpdateProduct/${this.productoEditado.id}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -507,7 +507,7 @@ export default {
         
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`https://localhost:7176/DeleteProduct/${id}`, {
+            const res = await fetch(`http://northwindweb.somee.com/DeleteProduct/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

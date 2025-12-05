@@ -239,7 +239,7 @@ export default {
 
         if (this.filtroBusqueda) params.append("SearchTerm", this.filtroBusqueda);
 
-        const url = `https://localhost:7176/api/products?${params.toString()}`;
+        const url = `http://northwindweb.somee.com/api/products?${params.toString()}`;
         const res = await fetch(url, {
           headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
         });
